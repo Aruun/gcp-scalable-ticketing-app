@@ -12,10 +12,10 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 // Database config
 const dbConfig = {
-  host: "34.41.219.164",
+  host: "hostname",
   user: "service-account",
-  password: "Changeme@123",
-  database: "bookmyshow",
+  password: "password",
+  database: "dbname",
 };
 
 app.get("/events", async (req, res) => {
