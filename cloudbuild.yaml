@@ -1,0 +1,38 @@
+steps:
+  # Install dependencies and run tests
+  - name: "gcr.io/cloud-builders/npm"
+    args: ["install"]
+    env:
+      - "CI=true" # To ensure Jest runs in CI mode if it has specific CI behavior
+
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ['build', '-t', 'gcr.io/upgradlabs-1748093710632/bookmyshow-app:latest', '.'] 
+      
+
+  # Push the container image to Google Container Registry (GCR)
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      ["push", "gcr.io/upgradlabs-1748093710632/bookmyshow-app:latest"]
+
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args: [
+        "run",
+        "deploy",
+        "bookmyshow-app",
+        "--image",
+        "gcr.io/upgradlabs-1748093710632/bookmyshow-app:latest",
+        "--region",
+        "us-central1",
+        "--platform",
+        "managed", # or 'gke', 'anthos'
+        "--allow-unauthenticated", # Allows public access, remove if not needed
+      ]
+
+images:
+  - "gcr.io/upgradlabs-1746954845644/bookmyshow-appo:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
